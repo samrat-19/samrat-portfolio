@@ -2,9 +2,9 @@ import { NavLink } from 'react-router-dom';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 const Sidebar = () => (
-  <aside className="w-64 h-full bg-zinc-950 dark:bg-zinc-900 text-white p-6 flex flex-col justify-between">
+  <aside className="w-64 h-full bg-zinc-950 dark:bg-zinc-900 text-white p-6 flex flex-col justify-between pb-16">
     <nav className="space-y-4">
-      {['about','experience','projects','skills','resume','blog'].map((s) => (
+      {['about','experience','projects','skills','resume','blog','tools'].map((s) => (
         <NavLink key={s} to={`/${s}`} className="block hover:text-blue-400">{`/${s}`}</NavLink>
       ))}
     </nav>
