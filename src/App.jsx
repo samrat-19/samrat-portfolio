@@ -9,6 +9,8 @@ import Skills from './pages/Skills';
 import Resume from './pages/Resume';
 import Blog from './pages/Blog';
 import StatusBar from './components/StatusBar';
+import { useEffect, useState } from 'react';
+import BootScreen from './components/BootScreen';
 
 const PageWrapper = ({ children }) => (
   <motion.div
@@ -24,6 +26,16 @@ const PageWrapper = ({ children }) => (
 
 const App = () => {
   const location = useLocation();
+  const [showBoot, setShowBoot] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowBoot(false), 3500); // fallback timeout
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showBoot) {
+    return <BootScreen onDone={() => setShowBoot(false)} />;
+  }
 
   return (
     <div className="flex h-screen font-mono bg-zinc-950 text-white">
@@ -42,7 +54,6 @@ const App = () => {
           </Routes>
         </AnimatePresence>
       </main>
-    <StatusBar />
     </div>
   );
 };
