@@ -6,7 +6,7 @@ const Sidebar = () => (
   <aside className="w-64 h-full bg-zinc-950 dark:bg-zinc-900 text-white p-6 flex flex-col">
     {/* Navigation */}
     <nav className="space-y-4 mb-6">
-      {['about','experience','projects','skills','resume','blog','tools','ai-samrat'].map((s) => (
+      {['about','ai-samrat','experience','projects','skills','resume','blog','tools'].map((s) => (
         <NavLink key={s} to={`/${s}`} className="block hover:text-blue-400">{`/${s}`}</NavLink>
       ))}
     </nav>
