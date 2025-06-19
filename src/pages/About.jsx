@@ -74,6 +74,10 @@ const About = () => (
         <span>Bengaluru, India</span>
       </div>
     </div>
+    {/* Temporary routing note */}
+    <div className="mt-4 text-xs sm:text-sm text-zinc-500 italic">
+      ⚠️ Pardon the inconvenience — please use the side panel for navigation. Direct URL access or page refreshes may cause routing issues (to be fixed in the next iteration).
+    </div>
   </div>
 );
 
