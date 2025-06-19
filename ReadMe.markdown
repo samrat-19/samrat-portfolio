@@ -2,7 +2,7 @@
 
 Welcome to my personal portfolio — built in one night with vibe coding™, config-driven UI, and a lot of coffee.
 
-Live Demo: [https://your-portfolio.vercel.app](https://your-portfolio.vercel.app)
+Live Demo: [https://samrat-portfolio-eta.vercel.app](https://samrat-portfolio-eta.vercel.app)
 
 ---
 
@@ -32,7 +32,7 @@ Live Demo: [https://your-portfolio.vercel.app](https://your-portfolio.vercel.app
 
 ---
 
-## 🤖 /ai-samrat Page
+## 🤖 /samBot Page
 
 A voice-driven AI version of myself (Sambot) powered by:
 - 🧠 Gemini 2.5 Flash
