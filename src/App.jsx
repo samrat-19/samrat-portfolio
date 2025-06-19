@@ -11,6 +11,7 @@ import Blog from './pages/Blog';
 import StatusBar from './components/StatusBar';
 import { useEffect, useState } from 'react';
 import BootScreen from './components/BootScreen';
+import AISamrat from './pages/AISamrat';
 
 const PageWrapper = ({ children }) => (
   <motion.div
@@ -51,6 +52,7 @@ const App = () => {
             <Route path="/resume" element={<PageWrapper><Resume /></PageWrapper>} />
             <Route path="/blog" element={<PageWrapper><Blog /></PageWrapper>} />
             <Route path="/tools" element={<PageWrapper><Tools /></PageWrapper>} />
+            <Route path="/ai-samrat" element={<PageWrapper><AISamrat /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
       </main>
