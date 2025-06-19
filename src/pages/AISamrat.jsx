@@ -4,6 +4,7 @@ import { speakText } from '../utils/voiceUtils';
 import SYSTEM_PROMPT from '../utils/systemPrompt';
 
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+const COOLDOWN_DURATION = 120; // in seconds
 
 const AISamrat = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -15,6 +16,7 @@ const AISamrat = () => {
   const recognitionRef = useRef(null);
   const preferredVoiceRef = useRef(null);
 
+  // Voice setup
   useEffect(() => {
     if ('speechSynthesis' in window) {
       const loadVoices = () => {
@@ -33,6 +35,34 @@ const AISamrat = () => {
     }
   }, []);
 
+  // Restore cooldown from localStorage
+  useEffect(() => {
+    const expiry = localStorage.getItem('sambot_cooldown_expiry');
+    if (expiry) {
+      const remaining = Math.floor((+expiry - Date.now()) / 1000);
+      if (remaining > 0) {
+        setCooldown(remaining);
+      }
+    }
+  }, []);
+
+  // Countdown effect
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown(prev => {
+        const next = prev - 1;
+        if (next <= 0) {
+          clearInterval(timer);
+          localStorage.removeItem('sambot_cooldown_expiry');
+        }
+        return next;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  // Speech Recognition
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window)) return;
     const recognition = new webkitSpeechRecognition();
@@ -60,17 +90,6 @@ const AISamrat = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (cooldown <= 0) return;
-    const timer = setInterval(() => {
-      setCooldown(prev => {
-        if (prev <= 1) clearInterval(timer);
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [cooldown]);
-
   const startRecording = () => {
     setTranscript('');
     setResponse('');
@@ -89,7 +108,9 @@ const AISamrat = () => {
       return;
     }
 
-    setCooldown(120); // set cooldown here (2 minutes)
+    const expiry = Date.now() + COOLDOWN_DURATION * 1000;
+    localStorage.setItem('sambot_cooldown_expiry', expiry.toString());
+    setCooldown(COOLDOWN_DURATION);
     setIsThinking(true);
 
     try {
