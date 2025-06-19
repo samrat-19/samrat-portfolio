@@ -19,7 +19,7 @@ const PageWrapper = ({ children }) => (
     animate={{ opacity: 1, x: 0 }}
     exit={{ opacity: 0, x: -40 }}
     transition={{ duration: 0.3 }}
-    className="p-6"
+    className="px-4 sm:px-6 pt-20 sm:pt-6 pb-6"
   >
     {children}
   </motion.div>
@@ -39,25 +39,27 @@ const App = () => {
   }
 
   return (
-    <div className="flex h-screen font-mono bg-zinc-950 text-white">
-      <Sidebar />
-      <main className="flex-1 overflow-y-auto relative">
-        <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Navigate to="/about" />} />
-            <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
-            <Route path="/experience" element={<PageWrapper><Experience /></PageWrapper>} />
-            <Route path="/projects" element={<PageWrapper><Projects /></PageWrapper>} />
-            <Route path="/skills" element={<PageWrapper><Skills /></PageWrapper>} />
-            <Route path="/resume" element={<PageWrapper><Resume /></PageWrapper>} />
-            <Route path="/blog" element={<PageWrapper><Blog /></PageWrapper>} />
-            <Route path="/tools" element={<PageWrapper><Tools /></PageWrapper>} />
-            <Route path="/ai-samrat" element={<PageWrapper><AISamrat /></PageWrapper>} />
-          </Routes>
-        </AnimatePresence>
-      </main>
-    </div>
-  );
+  <div className="md:flex md:h-screen font-mono bg-zinc-950 text-white">
+    <Sidebar />
+
+    <main className="flex-1 overflow-y-auto relative">
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<Navigate to="/about" />} />
+          <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
+          <Route path="/experience" element={<PageWrapper><Experience /></PageWrapper>} />
+          <Route path="/projects" element={<PageWrapper><Projects /></PageWrapper>} />
+          <Route path="/skills" element={<PageWrapper><Skills /></PageWrapper>} />
+          <Route path="/resume" element={<PageWrapper><Resume /></PageWrapper>} />
+          <Route path="/blog" element={<PageWrapper><Blog /></PageWrapper>} />
+          <Route path="/tools" element={<PageWrapper><Tools /></PageWrapper>} />
+          <Route path="/samBot" element={<PageWrapper><AISamrat /></PageWrapper>} />
+        </Routes>
+      </AnimatePresence>
+    </main>
+     <StatusBar />
+  </div>
+);
 };
 
 export default App;

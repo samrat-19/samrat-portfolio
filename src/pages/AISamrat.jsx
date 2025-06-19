@@ -31,35 +31,30 @@ const AISamrat = () => {
 
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window)) return;
-
     const recognition = new webkitSpeechRecognition();
     recognition.lang = 'en-US';
     recognition.interimResults = false;
     recognition.continuous = false;
 
     recognition.onresult = (event) => {
-        const spoken = event.results[0][0].transcript;
-        setTranscript(spoken);
-        fetchLLMResponse(spoken);
+      const spoken = event.results[0][0].transcript;
+      setTranscript(spoken);
+      fetchLLMResponse(spoken);
     };
 
-    recognition.onend = () => {
-        setIsRecording(false);
-    };
-
+    recognition.onend = () => setIsRecording(false);
     recognitionRef.current = recognition;
 
-    // 🧼 Cleanup on unmount
     return () => {
-        recognition.stop();                      // Stop listening
-        speechSynthesis.cancel();                // Stop speaking
-        setTranscript('');
-        setResponse('');
-        setIsThinking(false);
-        setIsRecording(false);
-        setIsSpeaking(false);
+      recognition.stop();
+      speechSynthesis.cancel();
+      setTranscript('');
+      setResponse('');
+      setIsThinking(false);
+      setIsRecording(false);
+      setIsSpeaking(false);
     };
-}, []);
+  }, []);
 
   const startRecording = () => {
     setTranscript('');
@@ -73,56 +68,44 @@ const AISamrat = () => {
     setIsRecording(false);
   };
 
-const COOLDOWN_MS = 8000;
-const lastCallTimeRef = useRef(0)
+  const COOLDOWN_MS = 8000;
+  const lastCallTimeRef = useRef(0);
 
-const fetchLLMResponse = async (prompt) => {
-  const now = Date.now();
+  const fetchLLMResponse = async (prompt) => {
+    const now = Date.now();
+    if (now - lastCallTimeRef.current < COOLDOWN_MS) {
+      setResponse("⏱️ SamBot is thinking... slow down.");
+      return;
+    }
 
-  if (now - lastCallTimeRef.current < COOLDOWN_MS) {
-    setResponse("⏱️ SamBot is thinking... slow down.");
-    return;
-  }
+    if (!prompt || prompt.trim().length < 5) {
+      setResponse("🧠 That was too short. Try asking something more specific.");
+      return;
+    }
 
-  if (!prompt || prompt.trim().length < 5) {
-    console.log("Prompt too short:", prompt);
-    setResponse("🧠 That was too short. Try asking something more specific.");
-    return;
-  }
+    lastCallTimeRef.current = now;
+    setIsThinking(true);
 
-  lastCallTimeRef.current = now;
-  setIsThinking(true);
+    try {
+      const result = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [
+          { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
+          { role: "user", parts: [{ text: prompt }] }
+        ],
+        config: { thinkingConfig: { thinkingBudget: 0 } }
+      });
 
-  try {
-    const result = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: SYSTEM_PROMPT }]
-        },
-        {
-          role: "user",
-          parts: [{ text: prompt }]
-        }
-      ],
-      config: {
-        thinkingConfig: {
-          thinkingBudget: 0,
-        },
-      },
-    });
+      const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "No response from SamBot.";
+      setResponse(text);
+      speakOutLoud(text);
+    } catch (err) {
+      console.error(err);
+      setResponse("⚡ Oops! SamBot tripped over a wire.");
+    }
 
-    const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "No response from SamBot.";
-    setResponse(text);
-    speakOutLoud(text);
-  } catch (err) {
-    console.error(err);
-    setResponse("⚡ Oops! SamBot tripped over a wire. Maybe the token expired? Peek at the network tab, hacker.");
-  }
-
-  setIsThinking(false);
-};
+    setIsThinking(false);
+  };
 
   const speakOutLoud = (text) => {
     setIsSpeaking(true);
@@ -132,24 +115,24 @@ const fetchLLMResponse = async (prompt) => {
   };
 
   return (
-    <div className="p-6 text-white font-mono min-h-screen bg-zinc-950">
-      <h1 className="text-4xl font-bold mb-6 text-fuchsia-400">/AI-Samrat</h1>
+    <div className="p-4 sm:p-6 text-white font-mono min-h-screen bg-zinc-950 pb-10">
+      <h1 className="text-2xl sm:text-4xl font-bold mb-6 text-fuchsia-400 border-b border-zinc-700 pb-2 text-left">
+        /samBot
+      </h1>
 
-      <div className="bg-zinc-900/50 border border-zinc-700 rounded-lg p-6 shadow-lg">
-        <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
-          {!isRecording && (
+      <div className="bg-zinc-900/50 border border-zinc-700 rounded-lg p-4 sm:p-6 shadow-lg space-y-4">
+        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+          {!isRecording ? (
             <button
               onClick={startRecording}
-              className="px-5 py-2 bg-green-600 text-white rounded hover:bg-green-700 w-full sm:w-auto"
+              className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 w-full sm:w-auto"
             >
               🎙️ Start Listening
             </button>
-          )}
-
-          {isRecording && (
+          ) : (
             <button
               onClick={stopRecording}
-              className="px-5 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 w-full sm:w-auto"
+              className="px-4 py-2 bg-yellow-500 rounded hover:bg-yellow-600 w-full sm:w-auto"
             >
               🔇 Stop Listening
             </button>
@@ -158,19 +141,25 @@ const fetchLLMResponse = async (prompt) => {
           {isSpeaking && (
             <button
               onClick={() => speechSynthesis.cancel()}
-              className="px-5 py-2 bg-red-600 text-white rounded hover:bg-red-700 w-full sm:w-auto"
+              className="px-4 py-2 bg-red-600 rounded hover:bg-red-700 w-full sm:w-auto"
             >
               🛑 Stop Speaking
             </button>
           )}
 
-          <div className="flex-1 text-sm text-zinc-400 italic mt-2 sm:mt-0 text-center sm:text-left">
-            {isRecording ? 'Listening to your voice...' : isThinking ? 'Thinking...' : isSpeaking ? 'Responding...' : 'Click to talk to SamBot. Maybe ask about his experience or skills?'}
+          <div className="flex-1 text-sm text-zinc-400 italic text-center sm:text-left">
+            {isRecording
+              ? 'Listening to your voice...'
+              : isThinking
+              ? 'Thinking...'
+              : isSpeaking
+              ? 'Responding...'
+              : 'Click to talk to SamBot. Maybe ask about his experience or tools?'}
           </div>
         </div>
 
         {transcript && (
-          <div className="mb-4 text-zinc-300 bg-zinc-800 p-4 rounded">
+          <div className="bg-zinc-800 p-4 rounded text-zinc-300 text-sm">
             <span className="text-fuchsia-300 font-semibold">You said:</span>
             <TypingText text={transcript} />
           </div>

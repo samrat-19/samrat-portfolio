@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 
-
 const messages = [
   "Hi, I'm Samrat Mukherjee",
   "→ building backend + AI tools"
@@ -42,7 +41,7 @@ const TypingHeader = () => {
   }, [charIndex, isDeleting, msgIndex]);
 
   return (
-    <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-fuchsia-400">
+    <h1 className="text-xl sm:text-3xl font-bold mb-4 text-fuchsia-400 text-left sm:text-left">
       {text}
       <span className="animate-pulse">|</span>
     </h1>
@@ -50,9 +49,10 @@ const TypingHeader = () => {
 };
 
 const About = () => (
-  <div>
+  <div className="px-4 sm:px-8 lg:px-12 pb-10">
     <TypingHeader />
-    <p className="text-lg leading-relaxed mt-4 text-zinc-300">
+
+    <p className="text-base sm:text-lg leading-relaxed mt-4 text-zinc-300 text-justify">
       I'm a backend-focused software engineer with 4 years of experience at SAP Labs, 
       where I've helped build, scale, and secure high-throughput microservices using Spring Boot, React, Kubernetes, 
       and AWS. I work at the intersection of clean architecture and smart systems — recently diving deep into GenAI, 
@@ -60,7 +60,7 @@ const About = () => (
       and when I'm not engineering solutions, I'm usually cooking or playing Ghosts Of Tsushima.
     </p>
 
-    <div className="mt-6 space-y-3 text-sm text-zinc-400">
+    <div className="mt-6 space-y-3 text-sm sm:text-base text-zinc-400">
       <div className="flex items-center gap-2">
         <FaPhoneAlt className="text-fuchsia-400" />
         <span>+91 98367 46818</span>
@@ -73,7 +73,6 @@ const About = () => (
         <FaMapMarkerAlt className="text-fuchsia-400" />
         <span>Bengaluru, India</span>
       </div>
-      
     </div>
   </div>
 );

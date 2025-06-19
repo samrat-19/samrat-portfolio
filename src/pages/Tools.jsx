@@ -29,41 +29,49 @@ const Tools = () => {
   };
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6 text-fuchsia-400 border-b border-zinc-700 pb-2">/tools</h1>
+    <div className="min-h-screen px-4 sm:px-8 lg:px-12 pb-24">
+      <h1 className="text-3xl font-bold mb-6 text-fuchsia-400 border-b border-zinc-700 pb-2 text-left">
+        /tools
+      </h1>
 
-      <div className="mb-4">
-        <label className="block mb-1 text-sm text-zinc-300">Select Tool:</label>
-        <select
-          value={tool}
-          onChange={(e) => setTool(e.target.value)}
-          className="bg-zinc-800 border border-zinc-600 p-2 rounded text-sm text-white"
+      <div className="max-w-2xl w-full space-y-4">
+        {/* Tool Selector */}
+        <div>
+          <label className="block mb-1 text-sm text-zinc-300">Select Tool:</label>
+          <select
+            value={tool}
+            onChange={(e) => setTool(e.target.value)}
+            className="bg-zinc-800 border border-zinc-600 p-2 rounded text-sm text-white w-full"
+          >
+            <option value="base64">Base64 Encode</option>
+            <option value="base64-decode">Base64 Decode</option>
+            <option value="jwt">JWT Decode</option>
+            <option value="json">JSON Formatter</option>
+          </select>
+        </div>
+
+        {/* Input */}
+        <textarea
+          rows={5}
+          placeholder="Paste input here..."
+          className="w-full bg-zinc-900 border border-zinc-700 p-3 rounded text-sm text-white resize-none"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+
+        {/* Run Button */}
+        <button
+          onClick={handleRun}
+          className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 py-2 rounded text-sm w-full sm:w-auto"
         >
-          <option value="base64">Base64 Encode</option>
-          <option value="base64-decode">Base64 Decode</option>
-          <option value="jwt">JWT Decode</option>
-          <option value="json">JSON Formatter</option>
-        </select>
+          Run
+        </button>
+
+        {/* Output */}
+        <pre className="bg-zinc-900 border border-zinc-700 p-4 rounded text-sm text-green-300 whitespace-pre-wrap overflow-x-auto min-h-[100px]">
+          {output || 'Output will appear here'}
+        </pre>
       </div>
-
-      <textarea
-        rows={5}
-        placeholder="Paste input here..."
-        className="w-full bg-zinc-900 border border-zinc-700 p-2 rounded text-sm text-white mb-4"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-
-      <button
-        onClick={handleRun}
-        className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 py-2 rounded text-sm mb-4"
-      >
-        Run
-      </button>
-
-      <pre className="bg-zinc-900 border border-zinc-700 p-4 rounded text-sm text-green-300 whitespace-pre-wrap overflow-auto">
-        {output || 'Output will appear here'}
-      </pre>
     </div>
   );
 };

@@ -35,8 +35,8 @@ const skills = {
 };
 
 const Skills = () => (
-  <div>
-    <h1 className="text-3xl font-bold mb-6 text-fuchsia-400 border-b border-zinc-700 pb-2">/skills</h1>
+  <div className="px-4 sm:px-8 lg:px-12 pb-24">
+    <h1 className="text-3xl font-bold mb-6 text-fuchsia-400 border-b border-zinc-700 pb-2 text-left sm:text-left">/skills</h1>
 
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {Object.entries(skills).map(([category, items]) => (
@@ -44,25 +44,28 @@ const Skills = () => (
           key={category}
           className="bg-zinc-900/40 backdrop-blur-md border border-zinc-700 rounded-lg p-4 hover:border-fuchsia-500 transition duration-300 hover:shadow-[0_0_12px_#D946EF]"
         >
-          <h2 className="text-xl font-semibold mb-2 text-white">{category}</h2>
-          <div className="space-y-3">
-          {items.map(({ name, level }) => (
-            <div key={name}>
-              <div className="flex justify-between text-sm text-zinc-300 mb-1">
-                <span>{name}</span>
-                <span className="text-zinc-500">{level}%</span>
+          <h2 className="text-xl font-semibold mb-3 text-white">{category}</h2>
+          <div className="space-y-4">
+            {items.map(({ name, level }) => (
+              <div key={name}>
+                <div className="flex justify-between text-sm text-zinc-300 mb-1">
+                  <span>{name}</span>
+                  <span className="text-zinc-500">{level}%</span>
+                </div>
+                <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-fuchsia-400/50 rounded-full transition-all duration-500 ease-in-out"
+                    style={{ width: `${level}%` }}
+                  />
+                </div>
               </div>
-              <div className="w-full h-2 bg-zinc-800 rounded-full">
-                <div className="h-full bg-fuchsia-300/60 rounded-full" style={{ width: `${level}%` }} />
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
         </div>
       ))}
     </div>
 
-    <div className="mt-10 border-t border-zinc-800 pt-4 text-sm italic text-zinc-500">
+    <div className="mt-10 border-t border-zinc-800 pt-4 text-sm italic text-zinc-500 text-center sm:text-left">
       🔧 Did you know? This list is 50% tools I use, 50% tools I’ve Googled under pressure.
     </div>
   </div>

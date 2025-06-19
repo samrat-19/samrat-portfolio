@@ -15,12 +15,11 @@ const StatusBar = () => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % logs.length);
     }, 3000);
-
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className="fixed bottom-0 left-0 w-full bg-zinc-950/90 text-fuchsia-400 text-xs font-mono px-4 py-2 border-t border-zinc-800 z-50">
+    <div className="fixed bottom-0 left-0 w-full bg-zinc-950/90 text-fuchsia-400 text-[0.7rem] sm:text-xs font-mono px-4 py-2 border-t border-zinc-800 z-50 overflow-x-auto whitespace-nowrap shadow-inner shadow-zinc-800">
       <span className="text-green-400">samrat@portfolio:~$</span> {logs[index]}
     </div>
   );
