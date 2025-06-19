@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { FaGithub, FaLinkedin, FaBars, FaTimes } from 'react-icons/fa';
+import { SiLeetcode } from 'react-icons/si';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,11 +38,30 @@ const Sidebar = () => {
         </nav>
 
         <div className="mt-auto space-y-4">
-          <div className="flex gap-4">
-            <a href="https://github.com/samrat-19" target="_blank" rel="noopener noreferrer"><FaGithub size={20} /></a>
-            <a href="https://www.linkedin.com/in/samrat-mukherjee-38478118b" target="_blank" rel="noopener noreferrer"><FaLinkedin size={20} /></a>
-          </div>
+        <div className="flex gap-4">
+          <a
+            href="https://github.com/samrat-19"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaGithub size={20} />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/samrat-mukherjee-38478118b"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaLinkedin size={20} />
+          </a>
+          <a
+            href="https://leetcode.com/u/SamratMukherjee1999/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <SiLeetcode size={20} />
+          </a>
         </div>
+      </div>
       </aside>
     </>
   );

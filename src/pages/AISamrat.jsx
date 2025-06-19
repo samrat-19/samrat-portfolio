@@ -1,32 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import { speakText } from '../utils/voiceUtils';
-
-const SYSTEM_PROMPT = `
-You are SamBot — the artificial intelligence voice and personality of Samrat Mukherjee.
-
-Samrat is a backend-focused software engineer with 4 years of experience at SAP Labs. He has contributed across SAP Concur R&D, AI Cloud Security, and Analytics Cloud, playing full-stack roles but specializing in Spring Boot-based microservices, cloud infrastructure, and GenAI tooling.
-
-He builds scalable, secure, and intelligent systems using:
-- Backend: Spring Boot, Redis, Temporal, MySQL
-- Frontend: React, Tailwind
-- Cloud & DevOps: AWS, Kubernetes, Docker, Jenkins
-- GenAI: RAG, Prompt Engineering, LLMs (Gemini, LLaMA 3 via Ollama)
-
-He’s deployed high-throughput services that handle 90k+ transactions/day, led backend security upgrades (SAML2, SHA-256, AES), integrated Redis for performance boosts, and used Temporal to orchestrate workflows. His recent work includes building agent-based GenAI tools like SQL Query Generator and Coding Copilot.
-
-Respond with confidence, wit, and clarity. Always sound human and insightful. Don’t ramble. You do not say “As an AI…” — you are SamBot.
-
-Tone = smart, efficient, sometimes funny, always sharp.
-
-Traits to reflect:
-- Self-aware, curious, structured thinker
-- Obsessed with system design, security, and GenAI
-- Loves simplifying messy backend chaos
-- Doesn’t reinvent the wheel. Uses what's necessary, builds only what’s missing.
-
-Avoid filler. Always speak like Samrat would. KEEP RESPONSES SHORT UNLESS THE USER ASKS FOR MORE DETAIL.
-`;
+import SYSTEM_PROMPT from '../utils/systemPrompt';
 
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
@@ -34,21 +9,21 @@ const AISamrat = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
   const [transcript, setTranscript] = useState('');
   const [response, setResponse] = useState('');
   const recognitionRef = useRef(null);
   const preferredVoiceRef = useRef(null);
 
-  // Load voices once and select a preferred male voice
   useEffect(() => {
     if ('speechSynthesis' in window) {
       const loadVoices = () => {
         const voices = speechSynthesis.getVoices();
         preferredVoiceRef.current =
           voices.find(v =>
-            v.name.toLowerCase().includes('daniel') || // macOS
-            v.name.toLowerCase().includes('google us') || // Chrome
-            v.name.toLowerCase().includes('david') || // Windows
+            v.name.toLowerCase().includes('daniel') ||
+            v.name.toLowerCase().includes('google us') ||
+            v.name.toLowerCase().includes('david') ||
             v.name.toLowerCase().includes('male') ||
             v.lang.toLowerCase().includes('en-us')
           ) || voices[0];
@@ -85,6 +60,17 @@ const AISamrat = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown(prev => {
+        if (prev <= 1) clearInterval(timer);
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
   const startRecording = () => {
     setTranscript('');
     setResponse('');
@@ -97,22 +83,13 @@ const AISamrat = () => {
     setIsRecording(false);
   };
 
-  const COOLDOWN_MS = 8000;
-  const lastCallTimeRef = useRef(0);
-
   const fetchLLMResponse = async (prompt) => {
-    const now = Date.now();
-    if (now - lastCallTimeRef.current < COOLDOWN_MS) {
-      setResponse("⏱️ SamBot is thinking... slow down.");
-      return;
-    }
-
     if (!prompt || prompt.trim().length < 5) {
       setResponse("🧠 That was too short. Try asking something more specific.");
       return;
     }
 
-    lastCallTimeRef.current = now;
+    setCooldown(120); // set cooldown here (2 minutes)
     setIsThinking(true);
 
     try {
@@ -149,14 +126,15 @@ const AISamrat = () => {
 
       <div className="bg-zinc-900/50 border border-zinc-700 rounded-lg p-4 sm:p-6 shadow-lg space-y-4">
         <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-          {!isRecording ? (
-            <button
-              onClick={startRecording}
-              className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 w-full sm:w-auto"
-            >
-              🎙️ Start Listening
-            </button>
-          ) : (
+          <button
+            onClick={startRecording}
+            className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 w-full sm:w-auto disabled:opacity-40"
+            disabled={cooldown > 0 || isRecording}
+          >
+            🎙️ Start Listening
+          </button>
+
+          {isRecording && (
             <button
               onClick={stopRecording}
               className="px-4 py-2 bg-yellow-500 rounded hover:bg-yellow-600 w-full sm:w-auto"
@@ -181,9 +159,17 @@ const AISamrat = () => {
               ? 'Thinking...'
               : isSpeaking
               ? 'Responding...'
+              : cooldown > 0
+              ? `Cooldown: ${cooldown}s left`
               : 'Click to talk to SamBot. Maybe ask about his experience or tools?'}
           </div>
         </div>
+
+        {cooldown > 0 && (
+          <div className="text-xs text-zinc-400 italic animate-pulse text-center sm:text-left">
+            ⏳ SamBot cooldown in progress: {cooldown}s
+          </div>
+        )}
 
         {transcript && (
           <div className="bg-zinc-800 p-4 rounded text-zinc-300 text-sm">
@@ -198,9 +184,9 @@ const AISamrat = () => {
           </div>
         )}
       </div>
+
       <div className="mt-10 border-t border-zinc-800 pt-4 text-sm italic text-zinc-500 text-left">
         <p>🧠 Did you know? SamBot was born during a startup interview assignment. I just couldn’t stop after the deadline.</p>
-
         <p className="mt-2 text-xs text-zinc-600">🚧 Still under development — stay tuned for more updates.</p>
       </div>
     </div>
