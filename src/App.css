@@ -42,3 +42,14 @@
 .read-the-docs {
   color: #888;
 }
+
+@keyframes fadeOut {
+  0% { opacity: 0; transform: translateY(-4px); }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+
+.animate-fadeOut {
+  animation: fadeOut 3s ease-in-out forwards;
+}

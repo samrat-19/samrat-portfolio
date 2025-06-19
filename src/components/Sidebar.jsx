@@ -1,14 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { FaGithub, FaLinkedin, FaBars, FaTimes } from 'react-icons/fa';
 import { SiLeetcode } from 'react-icons/si';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const navLinks = ['about','samBot','experience','projects','skills','resume','blog','tools'];
+  const [showHint, setShowHint] = useState(false); // ⬅️ initially false
+
+  const navLinks = ['about', 'samBot', 'experience', 'projects', 'skills', 'resume', 'blog', 'tools'];
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setShowHint(true);
+      const timer = setTimeout(() => setShowHint(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   return (
     <>
+      {/* Hint Tooltip (mobile only) */}
+      {showHint && !isOpen && (
+        <div className="fixed top-3 left-16 z-50 bg-zinc-800 text-white text-[11px] px-2 py-1 rounded shadow animate-fadeOut">
+          Tap to navigate →
+        </div>
+      )}
+
       {/* Hamburger toggle (mobile only) */}
       <div className="md:hidden fixed top-4 left-4 z-50">
         <button onClick={() => setIsOpen(!isOpen)} className="text-white text-2xl">
@@ -37,31 +54,19 @@ const Sidebar = () => {
           ))}
         </nav>
 
-        <div className="mt-auto space-y-4">
-        <div className="flex gap-4">
-          <a
-            href="https://github.com/samrat-19"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaGithub size={20} />
-          </a>
-          <a
-            href="https://www.linkedin.com/in/samrat-mukherjee-38478118b"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaLinkedin size={20} />
-          </a>
-          <a
-            href="https://leetcode.com/u/SamratMukherjee1999/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <SiLeetcode size={20} />
-          </a>
+        <div className="mt-auto space-y-4 pb-3">
+          <div className="flex gap-4">
+            <a href="https://github.com/samrat-19" target="_blank" rel="noopener noreferrer">
+              <FaGithub size={20} />
+            </a>
+            <a href="https://www.linkedin.com/in/samrat-mukherjee-38478118b" target="_blank" rel="noopener noreferrer">
+              <FaLinkedin size={20} />
+            </a>
+            <a href="https://leetcode.com/u/SamratMukherjee1999/" target="_blank" rel="noopener noreferrer">
+              <SiLeetcode size={20} />
+            </a>
+          </div>
         </div>
-      </div>
       </aside>
     </>
   );
