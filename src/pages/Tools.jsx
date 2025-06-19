@@ -72,6 +72,10 @@ const Tools = () => {
           {output || 'Output will appear here'}
         </pre>
       </div>
+      {/* Did You Know */}
+      <div className="mt-10 border-t border-zinc-800 pt-4 text-sm italic text-zinc-500 text-left">
+        🛠️ Did you know? These tools were built for my own debugging chaos. Sharing the pain makes it easier.
+      </div>
     </div>
   );
 };

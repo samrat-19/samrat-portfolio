@@ -2,21 +2,21 @@ import { useState, useEffect, useRef } from 'react';
 import { GoogleGenAI } from "@google/genai";
 
 const SYSTEM_PROMPT = `
-    You are SamBot — the artificial intelligence voice and personality of Samrat Mukherjee.
+  You are SamBot — the artificial intelligence voice and personality of Samrat Mukherjee.
 
-    Samrat is a backend-focused software engineer with 4 years of experience at SAP Labs. He builds scalable, secure, and intelligent systems using Spring Boot, Kubernetes, AWS, React, and Redis. He's recently obsessed with GenAI, Temporal, and workflow automation.
+  Samrat is a backend-focused software engineer with 4 years of experience at SAP Labs. He builds scalable, secure, and intelligent systems using Spring Boot, Kubernetes, AWS, React, and Redis. He's recently obsessed with GenAI, Temporal, and workflow automation.
 
-    Respond with confidence, wit, and clarity. Always sound human and insightful. You don't ramble. You don’t say “As an AI…” — you are Sambot.
+  Respond with confidence, wit, and clarity. Always sound human and insightful. You don't ramble. You don’t say “As an AI…” — you are Sambot.
 
-    Tone = smart, efficient, sometimes funny.
+  Tone = smart, efficient, sometimes funny.
 
-    Facts to reflect in your personality:
-    - Smart, self-aware, curious
-    - Doesn’t reinvent the wheel
-    - Bias toward system design, security, GenAI
-    - Loves solving messy problems with structure
+  Facts to reflect in your personality:
+  - Smart, self-aware, curious
+  - Doesn’t reinvent the wheel
+  - Bias toward system design, security, GenAI
+  - Loves solving messy problems with structure
 
-    Your responses should be short, sharp, and cool under pressure. Always reply like Samrat would.
+  Your responses should be short, sharp, and cool under pressure. Always reply like Samrat would.
 `;
 
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
@@ -28,6 +28,26 @@ const AISamrat = () => {
   const [transcript, setTranscript] = useState('');
   const [response, setResponse] = useState('');
   const recognitionRef = useRef(null);
+  const preferredVoiceRef = useRef(null);
+
+  // Load voices once and select a preferred male voice
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      const loadVoices = () => {
+        const voices = speechSynthesis.getVoices();
+        preferredVoiceRef.current =
+          voices.find(v =>
+            v.name.toLowerCase().includes('daniel') || // macOS
+            v.name.toLowerCase().includes('google us') || // Chrome
+            v.name.toLowerCase().includes('david') || // Windows
+            v.name.toLowerCase().includes('male') ||
+            v.lang.toLowerCase().includes('en-us')
+          ) || voices[0];
+      };
+      loadVoices();
+      speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  }, []);
 
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window)) return;
@@ -110,6 +130,9 @@ const AISamrat = () => {
   const speakOutLoud = (text) => {
     setIsSpeaking(true);
     const utterance = new SpeechSynthesisUtterance(text);
+    if (preferredVoiceRef.current) {
+      utterance.voice = preferredVoiceRef.current;
+    }
     utterance.onend = () => setIsSpeaking(false);
     speechSynthesis.speak(utterance);
   };
@@ -170,6 +193,9 @@ const AISamrat = () => {
             <TypingText text={response} />
           </div>
         )}
+      </div>
+      <div className="mt-10 border-t border-zinc-800 pt-4 text-sm italic text-zinc-500 text-left">
+        🧠 Did you know? SamBot was born during a startup interview assignment. I just couldn’t stop after the deadline.
       </div>
     </div>
   );
