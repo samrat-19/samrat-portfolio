@@ -49,7 +49,7 @@ const Resume = () => {
 
 Return only valid JSON in this format:
 {
-  "score": number,
+  "score": integer (0-100),
   "matched_skills": ["..."],
   "missing_skills": ["..."],
   "suggestions": ["..."]
