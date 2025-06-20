@@ -12,6 +12,7 @@ import StatusBar from './components/StatusBar';
 import { useEffect, useState } from 'react';
 import BootScreen from './components/BootScreen';
 import AISamrat from './pages/AISamrat';
+import NPCSimulation from './pages/NpcSimulation';
 
 const PageWrapper = ({ children }) => (
   <motion.div
@@ -54,6 +55,7 @@ const App = () => {
           <Route path="/blog" element={<PageWrapper><Blog /></PageWrapper>} />
           <Route path="/tools" element={<PageWrapper><Tools /></PageWrapper>} />
           <Route path="/samBot" element={<PageWrapper><AISamrat /></PageWrapper>} />
+          <Route path="/npcsimulation" element={<PageWrapper><NPCSimulation /></PageWrapper>} />
         </Routes>
       </AnimatePresence>
     </main>

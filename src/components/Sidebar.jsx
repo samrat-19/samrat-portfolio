@@ -7,7 +7,7 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showHint, setShowHint] = useState(false); // ⬅️ initially false
 
-  const navLinks = ['about', 'samBot', 'experience', 'projects', 'skills', 'resume', 'blog', 'tools'];
+  const navLinks = ['about', 'samBot', 'experience', 'projects', 'skills', 'resume', 'blog', 'tools', 'npcsimulation'];
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
