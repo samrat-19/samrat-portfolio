@@ -63,7 +63,7 @@ Parameters:
 - Health ranges from 0 to 100. Below 20 is critical, 20–50 is weak, 50+ is safe.
 - Stamina ranges from 0 to 100. Above 40 is considered good.
 - Use potion if health is low and potion is available.
-- Enemy presence requires immediate attention.
+- Enemy presence requires attention. But survive first if health is critical. Eliminate if safe.
 - Treasure threat level must be addressed if medium or high.
 
 Choose a goal from this list: ["Survive", "EliminateThreat", "ProtectTreasure", "PrepareForBattle"].
