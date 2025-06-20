@@ -1,5 +1,5 @@
 const AGENT_README = `
-🧠 Welcome to the Dungeon Guardian Simulator — where symbolic AI meets cognitive reasoning.
+Welcome to the Dungeon Guardian Simulator — where symbolic AI meets cognitive reasoning.
 
 This interactive agent simulates an intelligent NPC (Non-Player Character) making decisions in a dynamic environment using:
 
