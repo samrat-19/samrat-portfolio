@@ -142,7 +142,7 @@ const AISamrat = () => {
   return (
     <div className="p-4 sm:p-6 text-white font-mono min-h-screen bg-zinc-950 pb-10">
       <h1 className="text-2xl sm:text-4xl font-bold mb-6 text-fuchsia-400 border-b border-zinc-700 pb-2 text-left">
-        /samBot
+        /sam-bot
       </h1>
 
       <div className="bg-zinc-900/50 border border-zinc-700 rounded-lg p-4 sm:p-6 shadow-lg space-y-4">

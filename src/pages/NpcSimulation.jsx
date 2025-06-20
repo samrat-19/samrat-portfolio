@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GoogleGenAI } from '@google/genai';
+import AGENT_README from '../utils/agentReadMe';
 
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
@@ -25,6 +26,22 @@ export default function NPCSimulation() {
   const [output, setOutput] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [cooldown, setCooldown] = useState(
+    Number(localStorage.getItem('npcCooldown')) || 0
+  );
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown((prev) => {
+        const next = prev - 1;
+        localStorage.setItem('npcCooldown', next);
+        if (next <= 0) clearInterval(timer);
+        return next;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   const updateState = (key, value) => {
     setWorldState((prev) => ({ ...prev, [key]: value }));
@@ -34,14 +51,23 @@ export default function NPCSimulation() {
     setLoading(true);
     setOutput(null);
     setError('');
+    setCooldown(180);
+    localStorage.setItem('npcCooldown', 120);
 
     const stateStr = JSON.stringify(worldState, null, 2);
-    const prompt = `You are a dungeon guardian with the following world state:
+    const prompt = `You are a dungeon guardian NPC. Here's the world state:
 
 ${stateStr}
 
+Parameters:
+- Health ranges from 0 to 100. Below 20 is critical, 20–50 is weak, 50+ is safe.
+- Stamina ranges from 0 to 100. Above 40 is considered good.
+- Use potion if health is low and potion is available.
+- Enemy presence requires immediate attention.
+- Treasure threat level must be addressed if medium or high.
+
 Choose a goal from this list: ["Survive", "EliminateThreat", "ProtectTreasure", "PrepareForBattle"].
-Explain your reasoning and return the following JSON format only:
+Explain your reasoning and return only JSON in the following format:
 {
   "goal": "...",
   "reason": "...",
@@ -116,10 +142,10 @@ Only include the JSON object in your reply. Do not wrap in markdown.`;
 
         <button
           onClick={handleSimulate}
-          className="mt-4 px-4 py-2 bg-fuchsia-600 text-white rounded hover:bg-fuchsia-700 text-sm disabled:opacity-50"
-          disabled={loading}
+          className="mt-2 px-4 py-2 bg-fuchsia-600 text-white rounded hover:bg-fuchsia-700 text-sm disabled:opacity-50"
+          disabled={loading || cooldown > 0}
         >
-          {loading ? 'Thinking...' : 'Simulate'}
+          {loading ? 'Thinking...' : cooldown > 0 ? `Cooldown: ${cooldown}s` : 'Simulate'}
         </button>
 
         {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
@@ -135,6 +161,16 @@ Only include the JSON object in your reply. Do not wrap in markdown.`;
           </div>
         )}
       </div>
+    <div className="mt-10 max-w-2xl">
+        <details className="group bg-zinc-900 border border-zinc-700 rounded-lg transition hover:border-fuchsia-500 hover:shadow-[0_0_8px_#D946EF]">
+            <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-fuchsia-400 group-open:border-b border-zinc-700">
+                What's going on behind the scenes?
+            </summary>
+            <div className="px-4 pb-4 pt-2 text-sm text-zinc-400 whitespace-pre-wrap leading-relaxed">
+            {AGENT_README}
+            </div>
+        </details>
+    </div>
 
       <div className="mt-10 border-t border-zinc-800 pt-4 text-sm italic text-zinc-500">
         🤖 This demo combines symbolic AI (GOAP) and LLM reasoning to simulate intelligent NPCs.

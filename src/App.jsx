@@ -54,8 +54,8 @@ const App = () => {
           <Route path="/resume" element={<PageWrapper><Resume /></PageWrapper>} />
           <Route path="/blog" element={<PageWrapper><Blog /></PageWrapper>} />
           <Route path="/tools" element={<PageWrapper><Tools /></PageWrapper>} />
-          <Route path="/samBot" element={<PageWrapper><AISamrat /></PageWrapper>} />
-          <Route path="/npcsimulation" element={<PageWrapper><NPCSimulation /></PageWrapper>} />
+          <Route path="/sam-bot" element={<PageWrapper><AISamrat /></PageWrapper>} />
+          <Route path="/npc-simulation" element={<PageWrapper><NPCSimulation /></PageWrapper>} />
         </Routes>
       </AnimatePresence>
     </main>
